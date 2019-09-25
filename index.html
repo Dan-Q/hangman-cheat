@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Cheating Hangman</title>
+  <link rel="stylesheet" type="text/css" href="cheat.css">
+</head>
+<body>
+  <p id="loading">Loading... please wait...</p>
+
+  <main>
+    <p id="word-wrapper"></p>
+    <p id="guess-wrapper">
+      Your guess:
+      <input type="text" id="guess" class="letter" maxlength="1">
+    </p>
+    <ol id="guess-history"></ol>
+    <textarea id="log" disabled="disabled"></textarea>
+
+    <button id="start-over">Start Over</button>
+
+    <div id="settings">
+      <p>
+        <input type="checkbox" id="cheatMode">
+        <label for="cheatMode">Cheat mode</label>
+        <small>Can the computer cheat by changing the word it has picked?</small>
+      </p>
+      <p>
+        <input type="checkbox" id="transparentCheating">
+        <label for="transparentCheating">Transparent cheating</label>
+        <small>Can the computer cheat by changing the word it has picked?</small>
+      </p>
+      <p>
+        <input type="checkbox" id="ghostMode">
+        <label for="ghostMode">Ghost mode</label>
+        <small>Show the player what word the computer is thinking of... for now!</small>
+      </p>
+    </div>
+  </main>
+
+  <script type="text/javascript" src="cheat.js"></script>
+</body>
+</html>
