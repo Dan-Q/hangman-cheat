@@ -51,6 +51,8 @@ incorrectly-guessed letters. And then, if applicable, it changes the word it was
 thinking of in order to maximise the expected search space, i.e. to make it as hard
 as possible for you to guess the word.
 
+Read my blog post about it at https://danq.me/2019/09/26/cheatman/.
+
 ## Development/Future
 
 You'll find a stack of constants at the top of `cheat.js` which configure how the
