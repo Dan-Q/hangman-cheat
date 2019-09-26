@@ -118,7 +118,7 @@ fetch('wordlist.txt').then(r=>r.text()).then(t=>{
     log.value = `I'm thinking of a word with ${targetWordLength} letters.\n`;
   }
 
-  document.querySelector('#start-over').addEventListener('click', startGame());
+  document.querySelector('#start-over').addEventListener('click', startGame);
 
   guess.addEventListener('keyup', function(){
     const guessValue = guess.value.toUpperCase();
@@ -133,7 +133,7 @@ fetch('wordlist.txt').then(r=>r.text()).then(t=>{
     if(guesses.includes(guessValue)){
       queueEvent("You've already guessed that.");
       queueEvent(allowGuesses);
-      return;      
+      return;
     }
     // Engage cheat mode, if enabled
     if(cheatMode){
@@ -160,8 +160,8 @@ fetch('wordlist.txt').then(r=>r.text()).then(t=>{
           const positionOfTopScoringWord = wordsWeCouldHaveHadScores.indexOf(topScore);
           const candidateNewWord = wordsWeCouldHaveHad[positionOfTopScoringWord];
           if(candidateNewWord != targetWord){
+            if(transparentCheating) queueEvent(`I was thinking of ${targetWord}, but now I've changed my mind.`);
             targetWord = candidateNewWord;
-            if(transparentCheating) queueEvent("I'm... just changing my mind here...")
           }
         }
       }
@@ -169,9 +169,9 @@ fetch('wordlist.txt').then(r=>r.text()).then(t=>{
     // Report on the guess
     const guessIsGood = targetWord.includes(guessValue);
     if(guessIsGood){
-      queueEvent("Good guess.");
+      queueEvent(`Good guess. ${guessValue} found.`);
     } else {
-      queueEvent("Unlucky.");
+      queueEvent(`Unlucky. There's no ${guessValue}.`);
     }
     // Apply the guess
     applyGuess(guessValue, guessIsGood);
