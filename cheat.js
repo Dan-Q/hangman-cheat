@@ -122,6 +122,8 @@ fetch('wordlist.txt').then(r=>r.text()).then(t=>{
 
   guess.addEventListener('keyup', function(){
     const guessValue = guess.value.toUpperCase();
+    if(guess.disabled) return;         // prevent some silly edge cases
+    if(guessValue.length == 0) return; // prevent some more silly edge cases
     guess.disabled = true;
     addToLog(`Your guess: ${guessValue}`);
     // Sanity-check the guess
