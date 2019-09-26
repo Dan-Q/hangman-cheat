@@ -7,6 +7,7 @@ const log                           = document.querySelector('#log');
 const guess                         = document.querySelector('#guess');
 const guessHistory                  = document.querySelector('#guess-history');
 let   cheatMode                     = true;  // allow the computer to cheat by changing its word
+let   helpfulCheater                = false; // the computer cheats on BEHALF of the player instead of against them
 const cheatThreshold                = 2000;  // don't cheat if there are still at least this many candidate words (improves performance, reduces runaway cheating)
 let   transparentCheating           = true;  // tell the player when we cheat?
 let   ghostMode                     = false; // show the word the computer is thinking of as placeholder text
@@ -93,6 +94,7 @@ fetch('wordlist.txt').then(r=>r.text()).then(t=>{
   function drawSettings(){
     document.querySelector('#cheatMode').checked = cheatMode;
     document.querySelector('#transparentCheating').checked = transparentCheating;
+    document.querySelector('#helpfulCheater').checked = helpfulCheater;
     document.querySelector('#ghostMode').checked = ghostMode;
   }
   document.querySelector('#cheatMode').addEventListener('change', function(e){
@@ -100,6 +102,9 @@ fetch('wordlist.txt').then(r=>r.text()).then(t=>{
   });
   document.querySelector('#transparentCheating').addEventListener('change', function(e){
     transparentCheating = e.target.checked;
+  });
+  document.querySelector('#helpfulCheater').addEventListener('change', function(e){
+    helpfulCheater = e.target.checked;
   });
   document.querySelector('#ghostMode').addEventListener('change', function(e){
     ghostMode = e.target.checked;
@@ -142,7 +147,6 @@ fetch('wordlist.txt').then(r=>r.text()).then(t=>{
       // Generate a list of words we could secretly switch to
       const unguessedLetter = `[^${guesses.concat(['_']).join('')}]`; // use underscore as placeholder, effectively, in case we've made NO guesses yet
       const guessesRegExp = RegExp(`^${targetWordWithGaps(unguessedLetter).join('')}$`)
-      console.log(guessesRegExp);
       const wordsWeCouldHaveHad = wordlist[targetWordLength].filter(w=>w.match(guessesRegExp));
       // Rotate wordsWeCouldHaveHad a random amount so that the "first" high-scoring pick may vary
       wordsWeCouldHaveHad.rotateRight();
@@ -157,13 +161,27 @@ fetch('wordlist.txt').then(r=>r.text()).then(t=>{
           wordsWeCouldHaveHadScores[i] = wordlist[targetWordLength].filter(w=>w.match(regExpForSearchSpace)).length;
         }
         const currentWordScore = wordsWeCouldHaveHadScores[wordsWeCouldHaveHad.indexOf(targetWord)];
-        const topScore = Math.max(...wordsWeCouldHaveHadScores);
-        if(topScore > currentWordScore){
-          const positionOfTopScoringWord = wordsWeCouldHaveHadScores.indexOf(topScore);
-          const candidateNewWord = wordsWeCouldHaveHad[positionOfTopScoringWord];
-          if(candidateNewWord != targetWord){
-            if(transparentCheating) queueEvent(`I was thinking of ${targetWord}, but now I've changed my mind.`);
-            targetWord = candidateNewWord;
+        if(helpfulCheater){
+          // Helpful cheater works FOR the player
+          const bottomScore = Math.min(...wordsWeCouldHaveHadScores);
+          if(bottomScore < currentWordScore){
+            const positionOfBottomScoringWord = wordsWeCouldHaveHadScores.indexOf(bottomScore);
+            const candidateNewWord = wordsWeCouldHaveHad[positionOfBottomScoringWord];
+            if(candidateNewWord != targetWord){
+              if(transparentCheating) queueEvent(`I was thinking of ${targetWord}, but now I've changed my mind.`);
+              targetWord = candidateNewWord;
+            }
+          }
+        } else {
+          // Regular cheater works AGAINST the player
+          const topScore = Math.max(...wordsWeCouldHaveHadScores);
+          if(topScore > currentWordScore){
+            const positionOfTopScoringWord = wordsWeCouldHaveHadScores.indexOf(topScore);
+            const candidateNewWord = wordsWeCouldHaveHad[positionOfTopScoringWord];
+            if(candidateNewWord != targetWord){
+              if(transparentCheating) queueEvent(`I was thinking of ${targetWord}, but now I've changed my mind.`);
+              targetWord = candidateNewWord;
+            }
           }
         }
       }
