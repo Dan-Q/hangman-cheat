@@ -94,3 +94,9 @@ button:hover, button:active {
   font-size: 80%;
   font-color: #777;
 }
+
+footer {
+  font-size: 60%;
+  text-align: center;
+  color: gray;
+}
